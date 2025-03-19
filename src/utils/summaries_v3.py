@@ -7,12 +7,8 @@ from langchain.chains.summarize import load_summarize_chain
 from sklearn.cluster import KMeans
 from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores.chroma import Chroma
+from settings import CHROMA_PATH, SUMMARIES_FILE
 
-
-BOOKS_PATH = "/Users/chara/Documents/thesis/scripts_v2/books/"
-MODEL = "nomic-embed-text"
-CHROMA_PATH = f"./{MODEL}_db"
-SUMMARIES_FILE = "/Users/chara/Documents/thesis/scripts_v2/summaries.txt"
 
 vectorstore = Chroma(persist_directory=CHROMA_PATH)
 
@@ -57,7 +53,7 @@ reduce_chain = load_summarize_chain(llm=llm3,
 
 def check_chroma_integrity():
     collection_names = vectorstore._client.list_collections()
-    book_titles = [c.name for c in collection_names]
+    book_titles = [c for c in collection_names]
 
     for collection_name in book_titles:
         print(f"Checking collection: {collection_name}")
@@ -88,9 +84,9 @@ def check_chroma_integrity():
     if not null_embeddings and not null_chunks:
         print("\n✅ No issues found. The database is consistent.")
 
-def book_choice():
+def book_choice(book_name):
     collection_names = vectorstore._client.list_collections()
-    book_titles = [c.name for c in collection_names]
+    book_titles = [c for c in collection_names]
 
     if not book_titles:
         print("❌ No books found in the database!")
@@ -100,14 +96,13 @@ def book_choice():
     for title in book_titles:
         print(f"- {title}")     #προβλημα: langchain / e22...
 
-    while True:
-        selected_book = input("\n🔹 Enter the book title: ").strip()
-        if selected_book in book_titles:
-            break
-        print("⚠️ Invalid title, please try again.")
 
-    print(f"\n✅ You chose: {selected_book}")
-    return selected_book
+    if book_name in book_titles:
+        print("⚠️ Invalid title, please try again.")
+        pass
+
+    print(f"\n✅ You chose: {book_name}")
+    return book_name
 
 def get_clusters(vectors):
     num_clusters = 15

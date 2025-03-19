@@ -1,0 +1,5 @@
+BOOKS_PATH = "/home/george/Documents/scripts_v2/books"
+MODEL = "nomic-embed-text"
+CHROMA_PATH = f"./{MODEL}_db"
+SUMMARIES_FILE = "/Users/chara/Documents/thesis/scripts_v2/summaries.txt"
+BOOK_TITLE = "Animals_Farm"

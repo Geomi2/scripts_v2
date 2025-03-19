@@ -1,4 +1,5 @@
 chromadb
+pypdf
 scikit-learn
 ollama
 numpy

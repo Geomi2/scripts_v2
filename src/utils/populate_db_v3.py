@@ -1,20 +1,12 @@
 import os
-import argparse
-import shutil
 import chromadb
 from langchain.schema.document import Document
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings.ollama import OllamaEmbeddings
-from langchain_community.vectorstores.chroma import Chroma
-
-BOOKS_PATH = "/Users/chara/Documents/thesis/scripts_v2/books/"
-MODEL = "nomic-embed-text"
-CHROMA_PATH = f"./{MODEL}_db"
+from settings import BOOKS_PATH, MODEL, CHROMA_PATH
 
 client = chromadb.PersistentClient(CHROMA_PATH)
-
-
 def load_pdf(file_name):
     loader = PyPDFDirectoryLoader(BOOKS_PATH, glob=file_name)   #glob=file_name: διαβαζει ενα ενα τα αρχεια οχι ολο το folder μαζι
     documents = loader.load()
@@ -47,7 +39,7 @@ def process_pdf(file_name, chunks):                   # Process a single PDF fil
 
     # Check if the collection already exists
     existing_collections = client.list_collections()
-    if collection_name in [col.name for col in existing_collections]:
+    if collection_name in [col for col in existing_collections]:
         print(f"📚The book '{collection_name}' is already in the db.")
         return
 
@@ -114,22 +106,10 @@ def calculate_chunk_ids(chunks: list[Document]):
         # Add it to the page meta-data.
         chunk.metadata["id"] = chunk_id
 
-    return chunks
-
-
-
-    
+    return chunks    
 
 def main():
-    parser = argparse.ArgumentParser(description="Process PDF books into Chroma collections.")
-    parser.add_argument(
-        "--books-path",
-        type=str,
-        default=BOOKS_PATH,
-        help="Path to the directory containing PDF books."
-    )
-    args = parser.parse_args()
-
+    
     for file_name in os.listdir(BOOKS_PATH):
         if file_name.endswith(".pdf"):
             books = load_pdf(file_name)
