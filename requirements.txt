@@ -1,0 +1,7 @@
+chromadb
+scikit-learn
+ollama
+numpy
+langchain
+langchain_core
+langchain_community
